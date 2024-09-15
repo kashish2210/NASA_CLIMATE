@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Load Django static files -->
+        {% load static %}
+    
+        <!-- External JS Libraries (No changes needed) -->
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script defer src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123879/three.min.js"></script> 
+        <script defer src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123879/OrbitControls.js"></script>
+        <script defer src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123879/DeviceOrientationControls.js"></script>
+        <script defer src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123879/StereoEffect.js"></script>
+    
+        <!-- Link to your static JS file -->
+        <script defer src="{% static '1.js' %}"></script>
+    
+        <!-- Link to your static CSS file -->
+        <link rel="stylesheet" href="{% static '1.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Earth Model</title>
+    <style>
+        /* Styling for buttons */
+        #openModelBtn, #climateBtn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        /* Hover effect for buttons */
+        #openModelBtn:hover, #climateBtn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Popup styling */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background-color: white;
+            border: 2px solid #000;
+            z-index: 1000;
+        }
+
+        /* Close button styling */
+        #closePopup {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+<body>
+    <!-- Button to open the 3D Earth Model -->
+    <button id="openModelBtn">Open 3D Earth Model</button>
+
+    <!-- New button to go to 3D Climate -->
+    <button id="climateBtn">3D Climate</button>
+
+    <!-- Popup for 3D Earth Model -->
+    <div id="popup">
+        <button id="closePopup">X</button>
+        <!-- Container for WebGL -->
+        <canvas id="webglCanvas"></canvas>
+    </div>
+
+    <!-- Include Three.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        const openModelBtn = document.getElementById('openModelBtn');
+        const popup = document.getElementById('popup');
+        const closePopup = document.getElementById('closePopup');
+        const climateBtn = document.getElementById('climateBtn');
+
+        // Event to open 3D Earth model popup
+        openModelBtn.addEventListener('click', () => {
+            popup.style.display = 'block';
+            render3DEarthModel();
+        });
+
+        // Event to close the popup
+        closePopup.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        // Redirect to /run when the 3D Climate button is clicked
+        climateBtn.addEventListener('click', () => {
+            window.location.href = '/run';
+        });
+
+        // WebGL 3D Earth rendering using Three.js
+        function render3DEarthModel() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webglCanvas') });
+            renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);
+
+            // Create a sphere (Earth) with texture
+            const geometry = new THREE.SphereGeometry(1, 32, 32);
+            const textureLoader = new THREE.TextureLoader();
+            const texture = textureLoader.load('path_to_your_texture.jpg'); // Update this path
+            const material = new THREE.MeshBasicMaterial({ map: texture });
+
+            const sphere = new THREE.Mesh(geometry, material);
+            scene.add(sphere);
+
+            camera.position.z = 3;
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                sphere.rotation.y += 0.01;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>

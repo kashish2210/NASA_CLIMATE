@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load static files in Django -->
+    {% load static %}
+
+    <!-- External font and libraries (no changes needed) -->
+    <link href="https://fonts.googleapis.com/css?family=Allerta+Stencil" rel="stylesheet">
+    <link rel="stylesheet" href="{% static '2.css' %}"> <!-- Link to static CSS -->
+
+    <!-- External JS libraries -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.min.js"></script>
+
+    <!-- Link to your static JS file -->
+    <script defer src="{% static '2.js' %}"></script>    
+
+    <title>Water_journey</title>
+
+    <!-- Inline styles for the music widget -->
+    <style>
+        /* Style for the Podcast Button */
+        #podcastButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #podcastButton:hover {
+            background-color: #0056b3;
+        }
+
+        /* Style for the Podcast Widget */
+        #podcastWidget {
+            display: none; /* Initially hidden */
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            width: 300px;
+            max-height: 400px; /* Set maximum height */
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent background */
+            color: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto; /* Add vertical scrollbar if needed */
+        }
+
+        #podcastContent {
+            /* Optional: padding to avoid content sticking to the edges */
+            padding: 5px;
+        }
+
+        .track {
+            margin-bottom: 10px;
+        }
+
+        .track audio {
+            width: 100%;
+        }
+
+        .track span {
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Existing content -->
+    <div id="ocean" class="ocean"></div>
+    <div id="overlay" class="overlay">
+        <div id="holder" class="holder">
+            <div id="settings">settings:</div>
+
+            <div id="parameter">scene rotation speed</div>
+            <input type="range" min="1" max="100" value="1" class="slider" id="speed">
+
+            <div id="parameter">tires size</div>
+            <input type="range" min="1" max="100" value="1" class="slider" id="tsize">
+
+            <div id="parameter">jellyfish size</div>
+            <input type="range" min="1" max="100" value="1" class="slider" id="jsize">
+
+            <button type="button" id="button">resume</button>
+        </div>
+    </div>
+
+    <!-- Podcast Button and Widget -->
+    <button id="podcastButton">Podcast</button>
+
+    <div id="podcastWidget">
+        <div id="podcastContent">
+            <!-- The content will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Add JavaScript for functionality -->
+    <script>
+        document.getElementById('podcastButton').addEventListener('click', function() {
+            var widget = document.getElementById('podcastWidget');
+            widget.style.display = (widget.style.display === 'none' || widget.style.display === '') ? 'block' : 'none';
+        });
+
+        window.addEventListener('load', function() {
+            var podcastContent = document.getElementById('podcastContent');
+            var tracks = ['1.mp3', '2.mp3', '3.mp3']; // List of MP3 files
+            var basePath = '{% static "podcast/" %}'; // Path to the podcast folder
+
+            tracks.forEach(function(track) {
+                var trackElement = document.createElement('div');
+                trackElement.className = 'track';
+                trackElement.innerHTML = `
+                    <audio controls>
+                        <source src="${basePath}${track}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <span>${track}</span>
+                `;
+                podcastContent.appendChild(trackElement);
+            });
+        });
+    </script>
+</body>
+</html>
